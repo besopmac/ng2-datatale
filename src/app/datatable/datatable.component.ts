@@ -1,37 +1,41 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Http } from '@angular/http';
 
 @Component({
   selector: 'app-datatable',
-  templateUrl: './datatable.component.html',
-  styleUrls: ['./datatable.component.scss']
+  templateUrl: './datatable.component.html'
 })
-export class DatatableComponent implements OnInit {
+export class DatatableComponent {
 
-  public data;
-  public filterQuery = '';
-  public rowsOnPage = 10;
-  public sortBy = 'email';
-  public sortOrder = 'asc';
+    public data;
+    public rows = [];
+    public filterQuery = '';
+    public rowsOnPage = 5;
+    public sortBy = 'email';
+    public sortOrder = 'asc';
 
-  constructor(private http: Http) {
-  }
+    constructor(private http: Http) {
+        this.fetch((data) => {
+            this.rows = data;
+        });
+    }
+    fetch(cb) {
+        const req = new XMLHttpRequest();
+        req.open('GET', `data.json`);
 
-  ngOnInit(): void {
-      this.http.get('./app/datatable/data.json')
-          .subscribe((data) => {
-              setTimeout(() => {
-                  this.data = data.json();
-              }, 1000);
-          });
-  }
+        req.onload = () => {
+            cb(JSON.parse(req.response));
+        };
 
-  public toInt(num: string) {
-      return +num;
-  }
+    req.send();
+    }
 
-  public sortByWordLength = (a: any) => {
-      return a.city.length;
-  }
+    // public toInt(num: string) {
+    //    return +num;
+    // }
+
+    // public sortByWordLength = (a: any) => {
+    //     return a.city.length;
+    // }
 
 }
